@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RingLoader } from "react-spinners";
-import { addAddress } from "../../redux/user/userSlice";
+import { addAddress, removeAddress } from "../../redux/user/userSlice";
 import { removeFromCart, setQuantity } from "../../redux/cart/cartSlice";
 import { saveCurrentOrder } from "../../redux/order/orderSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // working
 export default function StripeHome() {
@@ -13,9 +15,9 @@ export default function StripeHome() {
 
   const { cartItems } = useSelector((state) => state.cart);
   const { currentOrder } = useSelector((state) => state.order);
-  console.log(currentOrder,"currentOrder");
+  console.log(currentOrder, "currentOrder");
   const { user, status, error, addresses } = useSelector((state) => state.user);
-  
+
   const generateRandomAddressId = () => {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -70,14 +72,17 @@ export default function StripeHome() {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState(null);
 
-  console.log(paymentMethod,"paymentMethod");
-  console.log(selectedAddress,"selectedAddress");
+  console.log(paymentMethod, "paymentMethod");
+  console.log(selectedAddress, "selectedAddress");
+
   const handleQuantity = (e, item) => {
     dispatch(setQuantity({ id: item.id, quantity: +e.target.value }));
+    toast.success("Item Quantity updated !");
   };
 
   const handleRemove = (e, item) => {
     dispatch(removeFromCart(item));
+    toast.success("Item removed from cart successfully!");
   };
 
   const handleAddress = (e) => {
@@ -130,11 +135,11 @@ export default function StripeHome() {
     let currentOrder;
     // Check if cart is empty
     if (!cartItems.length) {
-      Navigate('/');
+      Navigate("/");
     }
     // Run handleOrder function first
     if (selectedAddress && paymentMethod) {
-       currentOrder = {
+      currentOrder = {
         id: generateRandomOrderId(),
         items: cartItems,
         totalAmount,
@@ -145,24 +150,34 @@ export default function StripeHome() {
         status: "pending", // other status can be delivered, received.
       };
       dispatch(saveCurrentOrder(currentOrder));
-      console.log("dispatch(saveCurrentOrder(currentOrder))",currentOrder );
+      console.log("dispatch(saveCurrentOrder(currentOrder))", currentOrder);
       // need to redirect from here to a new page of order success.
     } else {
       alert("Enter Address and Payment method");
     }
-    console.log("currentOrder", currentOrder,currentOrder?.paymentMethod,currentOrder?.id);
-    console.log("cash condition",currentOrder &&  currentOrder.paymentMethod === "cash" &&    currentOrder.id);
+    console.log(
+      "currentOrder",
+      currentOrder,
+      currentOrder?.paymentMethod,
+      currentOrder?.id
+    );
+    console.log(
+      "cash condition",
+      currentOrder && currentOrder.paymentMethod === "cash" && currentOrder.id
+    );
     // Check payment method and currentOrder
     if (
       currentOrder &&
       currentOrder.paymentMethod === "cash" &&
       currentOrder.id
     ) {
-      
-      console.log("inside cash",currentOrder &&      currentOrder.paymentMethod === "cash" &&      currentOrder.id);
-      Navigate('/success');
+      console.log(
+        "inside cash",
+        currentOrder && currentOrder.paymentMethod === "cash" && currentOrder.id
+      );
+      Navigate("/success");
       // dispatch(saveOrder(currentOrder));
-      // <Navigate to={`/success`} replace={true}></Navigate>     
+      // <Navigate to={`/success`} replace={true}></Navigate>
     }
 
     if (
@@ -180,14 +195,6 @@ export default function StripeHome() {
 
           data: JSON.stringify({
             items: cartItems,
-            // items:[
-            //     {
-            //         id:1,
-            //         quantity:2,
-            //         price:1000,
-            //         name:"product"
-            //     },
-            // ]
           }),
         });
         const data = await res.data;
@@ -217,6 +224,19 @@ export default function StripeHome() {
 
   const handleSubmitAddress = (e) => {
     e.preventDefault();
+    // Check if any of the input fields are empty
+    if (
+      !addressDetails.name ||
+      !addressDetails.phone ||
+      !addressDetails.street ||
+      !addressDetails.city ||
+      !addressDetails.state ||
+      !addressDetails.pinCode
+    ) {
+      // Show an alert to fill in all details
+      alert("Please fill in all details before submitting.");
+      return; // Exit the function early
+    }
     dispatch(addAddress(addressDetails));
     setAddressDetails({
       id: "",
@@ -233,13 +253,7 @@ export default function StripeHome() {
 
   return (
     <div>
-      {/* {!cartItems.length && <Navigate to="/" replace={true}></Navigate>}
-      {currentOrder && currentOrder.paymentMethod === "cash" && (
-        <Navigate to={`/success/${currentOrder.id}`} replace={true}></Navigate>
-      )}
-      {currentOrder && currentOrder.paymentMethod === "card" && (
-        <Navigate to={`/stripe-checkout/`} replace={true}></Navigate>
-      )} */}
+      <ToastContainer />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
@@ -309,6 +323,7 @@ export default function StripeHome() {
                       </label>
                       <div className="mt-2">
                         <input
+                          required
                           id="phone"
                           name="phone"
                           value={addressDetails.phone}
@@ -329,6 +344,7 @@ export default function StripeHome() {
                       </label>
                       <div className="mt-2">
                         <input
+                          required
                           type="text"
                           name="street"
                           value={addressDetails.street}
@@ -349,6 +365,7 @@ export default function StripeHome() {
                       </label>
                       <div className="mt-2">
                         <input
+                          required
                           type="text"
                           name="city"
                           value={addressDetails.city}
@@ -370,6 +387,7 @@ export default function StripeHome() {
                       </label>
                       <div className="mt-2">
                         <input
+                          required
                           type="text"
                           name="state"
                           value={addressDetails.state}
@@ -391,6 +409,7 @@ export default function StripeHome() {
                       </label>
                       <div className="mt-2">
                         <input
+                          required
                           name="pinCode"
                           value={addressDetails.pinCode}
                           onChange={handleChange}
@@ -405,7 +424,19 @@ export default function StripeHome() {
 
                 <div className="mt-6 flex items-center justify-end gap-x-6">
                   <button
-                    // onClick={e=>reset()}
+                    onClick={() =>
+                      setAddressDetails({
+                        id: "",
+                        name: "",
+                        phone: "",
+                        email: "",
+                        street: "",
+                        city: "",
+                        state: "",
+                        pinCode: "",
+                        country: "",
+                      })
+                    }
                     type="button"
                     className="text-sm font-semibold leading-6 text-gray-900"
                   >
@@ -461,6 +492,26 @@ export default function StripeHome() {
                         <p className="text-sm leading-6 text-gray-500">
                           {address.city}
                         </p>
+                        <button
+                          onClick={() => dispatch(removeAddress(address))}
+                          type="button"
+                          className="px-2  py-2 font-medium tracking-wide text-black capitalize transition duration-300 ease-in-out transform rounded-xl hover:bg-gray-300 focus:outline-none active:scale-95"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </li>
                   ))}

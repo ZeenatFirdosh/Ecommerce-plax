@@ -25,21 +25,44 @@ import {
   ChevronDownIcon,
   CubeTransparentIcon,
 } from "@heroicons/react/24/outline";
-import { useDispatch } from "react-redux";
-import { setActiveComponent } from "../redux/user/userSlice";
- 
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveComponent, setUser } from "../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+import { auth } from "../firebase";
+
 export function Sidebar() {
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
- 
+  const { user, status, error } = useSelector((state) => state.user);
+  console.log(user, "user");
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
   };
 
   const dispatch = useDispatch();
+  const Navigate = useNavigate();
 
   const handleClick = (component) => {
     dispatch(setActiveComponent(component));
+  };
+  
+  const handleSignout = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredentials = await signOut(auth);
+      console.log(userCredentials);
+
+      // Dispatch action to save user data
+      dispatch(setUser(null));
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      Navigate("/"); // Redirect to login page after signup
+    } catch (error) {
+      console.error(error);
+    }
+    // dispatch(loginUser(formData));
   };
  
   return (
@@ -47,89 +70,11 @@ export function Sidebar() {
       <div className="mb-2 flex items-center gap-4 p-4">
         <img src="https://docs.material-tailwind.com/img/logo-ct-dark.png" alt="brand" className="h-8 w-8" />
         <Typography variant="h5" color="blue-gray">
-          Sidebar
+          My Account
         </Typography>
       </div>
       <List>
-        {/* <Accordion
-          open={open === 1}
-          icon={
-            <ChevronDownIcon
-              strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? "rotate-180" : ""}`}
-            />
-          }
-        >
-          <ListItem className="p-0" selected={open === 1}>
-            <AccordionHeader onClick={() => handleOpen(1)} className="border-b-0 p-3">
-              <ListItemPrefix>
-                <PresentationChartBarIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
-                Dashboard
-              </Typography>
-            </AccordionHeader>
-          </ListItem>
-          <AccordionBody className="py-1">
-            <List className="p-0">
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Analytics
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Reporting
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Projects
-              </ListItem>
-            </List>
-          </AccordionBody>
-        </Accordion>
-        <Accordion
-          open={open === 2}
-          icon={
-            <ChevronDownIcon
-              strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${open === 2 ? "rotate-180" : ""}`}
-            />
-          }
-        >
-          <ListItem className="p-0" selected={open === 2}>
-            <AccordionHeader onClick={() => handleOpen(2)} className="border-b-0 p-3">
-              <ListItemPrefix>
-                <ShoppingBagIcon className="h-5 w-5" />
-              </ListItemPrefix>
-              <Typography color="blue-gray" className="mr-auto font-normal">
-                E-Commerce
-              </Typography>
-            </AccordionHeader>
-          </ListItem>
-          <AccordionBody className="py-1">
-            <List className="p-0">
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Orders
-              </ListItem>
-              <ListItem>
-                <ListItemPrefix>
-                  <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                </ListItemPrefix>
-                Products
-              </ListItem>
-            </List>
-          </AccordionBody>
-        </Accordion>
-        <hr className="my-2 border-blue-gray-50" /> */}
+       
         
         <ListItem onClick={() => handleClick('profile')}>
           <ListItemPrefix>
@@ -143,7 +88,7 @@ export function Sidebar() {
           </ListItemPrefix>
           My Orders
         </ListItem>
-        <ListItem>
+        <ListItem onClick={handleSignout}>
           <ListItemPrefix>
             <PowerIcon className="h-5 w-5" />
           </ListItemPrefix>

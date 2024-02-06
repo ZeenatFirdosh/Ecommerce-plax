@@ -170,14 +170,14 @@ function User2() {
                     {user?.email}
                   </dd>
                 </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
                     Phone Number
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                     {user?.phone}
                   </dd>
-                </div>
+                </div> */}
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
                     Addresses 
@@ -195,21 +195,7 @@ function User2() {
               </dl>
             </div>
           </div>
-          {/* <div className="mt-20 text-center border-b pb-12">
-            {" "}
-            <h1 className="text-4xl font-medium text-gray-700">
-              {user?.displayName}
-            </h1>{" "}
-            <p className="font-light text-gray-600 mt-3">India</p>{" "}
-            <p className="mt-8 text-gray-500">{user?.email}</p>{" "}
-            <p className="mt-2 text-gray-500">Phone</p>{" "}
-          </div>{" "}
-          <div className="mt-12 flex flex-col justify-center">
-            {" "}
-            <h1 className="">Address</h1>
-            <AddressModal />
-            <AddressList />
-          </div> */}
+          
         </div>
       </div>
     </div>

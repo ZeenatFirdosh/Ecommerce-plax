@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import notfound from "../assets/images/nothing-here.avif"
 
 const OrderSection = () => {
   const { orders } = useSelector((state) => state.order);
@@ -33,7 +34,17 @@ const OrderSection = () => {
             </h2>
           </div>
 
-          {orders &&
+          {orders && 
+            orders.length === 0 ? (
+              <div>
+                <div className="text-xl text-center ">Your order list is empty.</div>
+                <div className="flex justify-center mt-8">
+                <img src={notfound} alt="" className="rounded-full"/>
+
+                </div>
+              </div>
+            ) : (
+
             orders.map((order) => (
               <div key={order.id} className="my-14">
                 <div className="flex  flex-wrap pb-3 lg:pb-11">
@@ -248,7 +259,7 @@ const OrderSection = () => {
                           <div className="me-2">Total</div>
                           <span className="flex items-center text-blue-500">
                             <span className="mr-3">$</span>
-                            <span className="text-xl">{order.totalAmount}</span>
+                            <span className="text-xl">{order?.totalAmount.toFixed(2)}</span>
                           </span>
                         </div>
                       </div>
@@ -264,7 +275,10 @@ const OrderSection = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+            
+            )
+            }
         </div>
       </div>
     </section>

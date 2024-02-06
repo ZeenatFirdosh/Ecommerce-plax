@@ -28,7 +28,7 @@ import {
   fetchQueryProducts,
   setShowResults,
 } from "../redux/product/productsSlice";
-import { setUser } from "../redux/user/userSlice";
+import { setActiveComponent, setUser } from "../redux/user/userSlice";
 import { Popover } from "@headlessui/react";
 import {
   ChevronDownIcon,
@@ -44,12 +44,10 @@ import {
   SquaresPlusIcon,
 } from "@heroicons/react/24/outline";
 
-
 const callsToAction = [
   { name: "Watch demo", href: "#", icon: PlayCircleIcon },
   { name: "Contact sales", href: "#", icon: PhoneIcon },
 ];
-
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -120,7 +118,7 @@ export default function Navbar() {
       dispatch(setUser(null));
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-
+      
       Navigate("/"); // Redirect to login page after signup
     } catch (error) {
       console.error(error);
@@ -162,6 +160,10 @@ export default function Navbar() {
     dispatch(fetchProductsByCategory(category));
   };
 
+  const handleClick = (component) => {
+    dispatch(setActiveComponent(component));
+  };
+
   return (
     <Disclosure
       as="nav"
@@ -191,23 +193,8 @@ export default function Navbar() {
               <div className="flex flex-1 items-center justify-center sm:items-stretch w-full">
                 <div className="hidden sm:ml-6 sm:block w-full ">
                   <div className="flex items-center justify-evenly  space-x-4 w-full">
-                    {/* {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-teal-500 text-white"
-                            : "text-gray-900 hover:bg-gray-700 hover:text-white",
-                          "rounded-md px-3 py-2 text-sm font-medium"
-                        )}
-                        aria-current={item.current ? "page" : undefined}
-                      >
-                        {item.name}
-                      </a>
-                    ))} */}
-                     {/* search  */}
-                     <div className=" relative  my-auto text-gray-600 w-1/2">
+                    {/* search  */}
+                    <div className=" relative  my-auto text-gray-600 w-1/2">
                       <form onSubmit={handleSubmit}>
                         <input
                           className="border-2 w-full border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
@@ -231,15 +218,11 @@ export default function Navbar() {
                           Loading...
                         </div>
                       ) : (
-                        showResults &&                        
-                        searchResults?.products.length > 0 && (
+                        showResults && (
                           <div className="mt-12 absolute top-0 w-full max-h-48 overflow-y-auto border border-gray-300 rounded-md bg-white">
                             {searchResults?.products &&
-                              searchResults?.products.map((product) => (
-                                // <Link
-                                //   to={`/product/${product.id}`}
-                                //   className="block cursor-pointer"
-                                // >
+                            searchResults.products.length > 0 ? (
+                              searchResults.products.map((product) => (
                                 <div
                                   key={product.id}
                                   onClick={(e) => {
@@ -261,8 +244,10 @@ export default function Navbar() {
                                   </div>
                                   <div>{product.title}</div>
                                 </div>
-                                // </Link>
-                              ))}
+                              ))
+                            ) : (
+                              <div className="p-2">No items to show.</div>
+                            )}
                           </div>
                         )
                       )}
@@ -379,10 +364,6 @@ export default function Navbar() {
                         </Popover.Panel>
                       </Transition>
                     </Popover>
-
-                   
-
-                    
                   </div>
                 </div>
               </div>
@@ -468,7 +449,6 @@ export default function Navbar() {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      
                       {user && (
                         <Menu.Item>
                           {({ active }) => (
@@ -485,7 +465,7 @@ export default function Navbar() {
                           )}
                         </Menu.Item>
                       )}
-                      
+
                       <Menu.Item>
                         {({ active }) => (
                           <Link
@@ -499,10 +479,11 @@ export default function Navbar() {
                           </Link>
                         )}
                       </Menu.Item>
-                      
+
                       <Menu.Item>
                         {({ active }) => (
                           <Link
+                          onClick={() => handleClick('orders')}
                             to="/account"
                             className={classNames(
                               active ? "bg-gray-100" : "",

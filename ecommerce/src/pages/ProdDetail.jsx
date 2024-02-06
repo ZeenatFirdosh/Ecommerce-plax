@@ -5,6 +5,7 @@ import ProductDetail from '../components/ProductDetail'
 function ProdDetail() {
   return (
     <>
+    
     <Navbar2/>
     <ProductDetail/>
     <Footer/>

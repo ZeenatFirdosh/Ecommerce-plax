@@ -1,17 +1,4 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
+
 import { Fragment, useState } from 'react'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -24,6 +11,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, setSortBy, setSortedProducts } from '../redux/product/productsSlice'
 import { Button } from '@material-tailwind/react';
 import React, { useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const sortOptions = [
   { name: 'All',value:'all', href: '#', current: false },
@@ -33,50 +22,7 @@ const sortOptions = [
   // { name: 'Most Popular', href: '#', current: true },
   // { name: 'Newest', href: '#', current: false },
 ]
-const subCategories = [
-  { name: 'Totes', href: '#' },
-  { name: 'Backpacks', href: '#' },
-  { name: 'Travel Bags', href: '#' },
-  { name: 'Hip Bags', href: '#' },
-  { name: 'Laptop Sleeves', href: '#' },
-]
-const filters = [
-  // {
-  //   id: 'color',
-  //   name: 'Color',
-  //   options: [
-  //     { value: 'white', label: 'White', checked: false },
-  //     { value: 'beige', label: 'Beige', checked: false },
-  //     { value: 'blue', label: 'Blue', checked: true },
-  //     { value: 'brown', label: 'Brown', checked: false },
-  //     { value: 'green', label: 'Green', checked: false },
-  //     { value: 'purple', label: 'Purple', checked: false },
-  //   ],
-  // },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
-    ],
-  },
-  // {
-  //   id: 'size',
-  //   name: 'Size',
-  //   options: [
-  //     { value: '2l', label: '2L', checked: false },
-  //     { value: '6l', label: '6L', checked: false },
-  //     { value: '12l', label: '12L', checked: false },
-  //     { value: '18l', label: '18L', checked: false },
-  //     { value: '20l', label: '20L', checked: false },
-  //     { value: '40l', label: '40L', checked: true },
-  //   ],
-  // },
-]
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -96,25 +42,6 @@ export default function CategoryFilters() {
     dispatch(setSortBy(criteria));
     console.log(products,"category");
 
-      // let toSortArray = [...products];
-      // // Calculate discounted price for each product
-      // toSortArray = toSortArray.map((product) => {
-      //   const discountedPrice = product.price * (1 - product.discountPercentage / 100);
-      //     // Return a new object with the updated discountedPrice property
-      //   return {
-      //     ...product,
-      //     discountedPrice: discountedPrice
-      // };
-      // });
-
-      // // Sort products array by discounted price in ascending order
-      // const sortedProductsAsc = toSortArray.slice().sort((a, b) => a.discountedPrice - b.discountedPrice);
-
-      // // Sort products array by discounted price in descending order
-      // const sortedProductsDesc = toSortArray.slice().sort((a, b) => b.discountedPrice - a.discountedPrice);
-
-      // console.log("Sorted Products (Ascending):", sortedProductsAsc);
-      // console.log("Sorted Products (Descending):", sortedProductsDesc);
 
 
 
@@ -144,12 +71,14 @@ export default function CategoryFilters() {
       console.log(toSortArray,"aftertoSortArray");
      // Dispatch the action to update sorted products
      dispatch(setSortedProducts(toSortArray));
+     toast.success("Item sorted successfully!");
+
   };
 
 
   return (
     <>
-   
+   <ToastContainer />
     <div className="bg-white">
       <div>
         {/* Mobile filter dialog */}

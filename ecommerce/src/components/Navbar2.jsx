@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import heart from "../assets/icons/e-commerce.png";
 import user from "../assets/icons/user.png";
 import hamburger from "../assets/icons/hamburger.png";
@@ -16,7 +16,7 @@ import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import logo from "../assets/images/shopping.jpg";
 import WishListModal from "./WishListModal";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { useSelector, useDispatch } from "react-redux";
@@ -83,6 +83,26 @@ export default function Navbar() {
   const handleSetActiveLink = (name) => {
     dispatch(setNavActiveLink(name));
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const pathname = location.pathname;
+    let activeLink = 'Home'; // Default to Home
+
+    // Determine the active link based on the current URL
+    if (pathname === '/') {
+      activeLink = 'Home';
+    } else if (pathname === '/product') {
+      activeLink = 'Product';
+    } else if (pathname === '/about') {
+      activeLink = 'About';
+    } else if (pathname === '/contact') {
+      activeLink = 'Contact Us';
+    } // Add more conditions for other routes as needed
+
+    dispatch(setNavActiveLink(activeLink));
+  }, [location, dispatch]);
 
   // search
   const handleChange = (e) => {

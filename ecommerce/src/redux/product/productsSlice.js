@@ -190,6 +190,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { setSortBy, setSortedProducts , setCurrentPage, setTotalPages, setFeaturedProducts, setShowResults} = productSlice.actions;
+export const { setSortBy, setSortedProducts , setCurrentPage, setTotalPages, setFeaturedProducts, setShowResults } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -13,33 +13,6 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// const products = [
-//   {
-//     id: 1,
-//     name: "Throwback Hip Bag",
-//     href: "#",
-//     color: "Salmon",
-//     price: "$90.00",
-//     quantity: 1,
-//     imageSrc:
-//       "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-//     imageAlt:
-//       "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
-//   },
-//   {
-//     id: 2,
-//     name: "Medium Stuff Satchel",
-//     href: "#",
-//     color: "Blue",
-//     price: "$32.00",
-//     quantity: 1,
-//     imageSrc:
-//       "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
-//     imageAlt:
-//       "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
-//   },
-// More products...
-// ];
 
 // eslint-disable-next-line react/prop-types
 export default function CartModal({ opencart, handleClose, setOpencart }) {
@@ -66,29 +39,17 @@ export default function CartModal({ opencart, handleClose, setOpencart }) {
   const handleDecrement = (product) => {
     console.log(product, "product");
     dispatch(decrementQuantity(product));
-    // setShowToast(true);
+    toast.success("Item Quantity updated !");
 
-    // // Hide the toast after a few seconds (adjust the timeout as needed)
-    // setTimeout(() => {
-    //   setShowToast(false);
-    // }, 3000);
   };
 
   const handleIncrement = (product) => {
     console.log(product, "product");
     dispatch(incrementQuantity(product));
-    // setShowToast(true);
+    toast.success("Item Quantity updated !");
 
-    // // Hide the toast after a few seconds (adjust the timeout as needed)
-    // setTimeout(() => {
-    //   setShowToast(false);
-    // }, 3000);
   };
-  // // Calculate the total price
-  // const totalPrice = cartItems.reduce((total, item) => {
-  //   console.log(total,item, "item",item.price,item.quantity,item.discountPercentage);
-  //   return parseFloat(total + item.price * item.quantity * (1 - item.discountPercentage / 100)).toFixed(2)
-  // }, 0);
+
 
   // Function to calculate discounted price for a single product
   const calculateDiscountedPrice = (price, quantity, discountPercentage) => {
@@ -115,6 +76,7 @@ export default function CartModal({ opencart, handleClose, setOpencart }) {
   return (
     <>
     {/* <ToastContainer /> */}
+
     <Transition.Root show={opencart} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={handleClose}>
         <Transition.Child

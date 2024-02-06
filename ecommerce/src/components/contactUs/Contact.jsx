@@ -1,5 +1,4 @@
 import React from 'react'
-import GoogleMap from './GoogleMap'
 import MapComponent from './MapComponent'
 import MapLeaflet from './MapLeaflet'
 
